@@ -1,7 +1,7 @@
 
 import axios from 'axios';
  
-const apiBaseUrl = 'http://localhost:3002/api/v1';
+const apiBaseUrl = 'https://backend-mwzjngzkt-madhav-sainis-projects.vercel.app/api/v1';
 const getSystemLogApi = async (startDate: string, endDate: string) => {
     try {
         const response = await axios.get(`${apiBaseUrl}/system/log?startDate=${startDate}&endDate=${endDate}`);
