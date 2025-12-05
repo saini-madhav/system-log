@@ -36,12 +36,33 @@ export const getSystemLog = async (req: Request, res: Response) => {
         let filesProcessed = 0;
         
         for (const file of logFiles) {
-            // Extract date from filename (format: YYYYMMDD) and convert to YYYY-MM-DD
-            const year = file.slice(0, 4);
-            const month = file.slice(4, 6);
-            const day = file.slice(6, 8);
-            const fileDateStr = `${year}-${month}-${day}`;
-            
+            console.log("Processing file:", file);
+            const filePath = path.join(logsDir, file);
+
+            // Read file content up-front so we can extract the date from inside the log
+            const content = fs.readFileSync(filePath, "utf-8");
+            const lines = content.split("\n");
+
+            // Try to find a date inside the file in the form "(MM/DD" (e.g. "(11/23 10:54:09")
+            const dateMatch = content.match(/\((\d{1,2})\/(\d{1,2})\b/);
+            // Use the file's mtime to determine the year (fallback if year is not present in the log)
+            const stats = fs.statSync(filePath);
+            const fileYear = stats.mtime.getFullYear();
+
+            const pad = (s: string | number) => String(s).padStart(2, "0");
+
+            let fileDateStr: string;
+            if (dateMatch) {
+                const month = pad(dateMatch[1]);
+                const day = pad(dateMatch[2]);
+                fileDateStr = `${fileYear}-${month}-${day}`;
+            } else {
+                // If no date is found inside the file, fall back to the file modification date
+                const m = pad(stats.mtime.getMonth() + 1);
+                const d = pad(stats.mtime.getDate());
+                fileDateStr = `${fileYear}-${m}-${d}`;
+            }
+
             // Check if file is within date range using string comparison
             if (start && fileDateStr < start) {
                 continue;
@@ -49,11 +70,8 @@ export const getSystemLog = async (req: Request, res: Response) => {
             if (end && fileDateStr > end) {
                 continue;
             }
-            
+
             filesProcessed++;
-            const filePath = path.join(logsDir, file);
-            const content = fs.readFileSync(filePath, "utf-8");
-            const lines = content.split("\n");
             
             for (const line of lines) {
                 const computerNameMatch = line.match(/ComputerName:([^\s]+)/);
