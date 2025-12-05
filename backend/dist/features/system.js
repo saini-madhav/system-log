@@ -56,7 +56,29 @@ const getSystemLog = async (req, res) => {
     const startDate = req.query.startDate;
     const endDate = req.query.endDate;
     try {
-        const logsDir = path.join(__dirname, "../../logs");
+        // Try multiple paths for logs directory to support both local and Vercel deployments
+        let logsDir = path.join(__dirname, "../../logs");
+        // If running from dist, try the original source relative path
+        if (!fs.existsSync(logsDir)) {
+            logsDir = path.join(process.cwd(), "logs");
+        }
+        // If still not found, try absolute path from project root
+        if (!fs.existsSync(logsDir)) {
+            logsDir = path.join(__dirname, "../../../logs");
+        }
+        console.log("Logs directory path:", logsDir);
+        console.log("Logs directory exists:", fs.existsSync(logsDir));
+        if (!fs.existsSync(logsDir)) {
+            return res.status(404).json({
+                status: "error",
+                message: "Logs directory not found",
+                searchedPaths: [
+                    path.join(__dirname, "../../logs"),
+                    path.join(process.cwd(), "logs"),
+                    path.join(__dirname, "../../../logs")
+                ]
+            });
+        }
         const logFiles = fs.readdirSync(logsDir);
         // Parse start and end dates to YYYY-MM-DD format
         const start = parseDate(startDate);
