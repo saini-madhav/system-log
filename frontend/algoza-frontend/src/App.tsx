@@ -8,7 +8,7 @@ import SystemLog from './components/pages/SystemLog'
 function App() {
   const [count, setCount] = useState(0)
 
-  return (
+  return ( 
     <>
       <SystemLog />
     </>
