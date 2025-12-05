@@ -1,34 +1,4 @@
-# System Log Project
 
-A full-stack application for managing and viewing system logs with a React frontend and Node.js/Express backend.
-
-## Project Structure
-
-```
-├── backend/              # Node.js/Express server
-│   ├── src/
-│   │   ├── App.ts        # Main application file
-│   │   ├── router.ts     # Route definitions
-│   │   ├── controller/   # Request controllers
-│   │   ├── features/     # Business logic
-│   │   ├── routes/       # API routes
-│   │   └── utils/        # Utility functions
-│   ├── logs/             # Log files
-│   ├── package.json
-│   └── tsconfig.json
-│
-└── frontend/             # React application
-    └── algoza-frontend/
-        ├── src/
-        │   ├── components/  # React components
-        │   ├── services/    # API services
-        │   ├── interface/   # TypeScript interfaces
-        │   ├── App.tsx
-        │   └── main.tsx
-        ├── package.json
-        ├── vite.config.ts
-        └── tsconfig.json
-```
 
 ## Prerequisites
 
@@ -139,7 +109,7 @@ cd frontend/algoza-frontend
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173` (frontend) and the backend API will run on a configured port (typically `http://localhost:3000`).
+The application will be available at `http://localhost:5173` (frontend) and the backend API will run on a configured port (typically `http://localhost:3002`).
 
 ## Features
 
