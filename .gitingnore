@@ -1,0 +1,4 @@
+backend/node_modules
+backend/package-lock.json
+frontend/algoza-frontend/node_modules
+frontend/algoza-frontend/package-lock.json
