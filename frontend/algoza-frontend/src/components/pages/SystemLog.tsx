@@ -16,6 +16,7 @@ const SystemLog = () => {
     const fetchSystemLog = async () => {
         try {
             const response = await getSystemLogApi(startDate, endDate);
+            
             setSystemLog(response?.data || []);
         } catch (error) {
             console.error("Error fetching system log:", error);
@@ -27,13 +28,26 @@ const SystemLog = () => {
     }, [startDate, endDate]);
 
     const changeStartDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log("e.target.value", e.target.value);
         setStartDate(e.target.value);
     };
 
     const changeEndDate = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEndDate(e.target.value);
     };
+
+    const nameWithStar = (name: string) => {
+        let nameLength = name.length;
+        if (nameLength > 5) {
+            let star = "";
+            for(let i = 0; i < name.length -5; i++) {
+                star += "*"
+            }
+            return name.slice(0,3) + star + name.slice(-2,)
+        }
+        else{
+            return name;
+        }
+    }
 
     return (
         <>
@@ -70,7 +84,8 @@ const SystemLog = () => {
                     {systemLog && systemLog.length ? (
                         systemLog.map((log, index) => (
                             <tr key={index}>
-                                <td>{log.computerName}</td>
+                                {/* <td>{log.computerName.length > 3 ? <>{log.computerName.slice(0,3)} *** { <>{log.computerName.slice(-2,)}</> }</> : log.computerName}</td> */}
+                                <td>{nameWithStar(log.computerName)}</td>
                                 <td>{log.numberOfDisconnectedPerCopmuter}</td>
                                 {/* <td>{log.timestamp}</td> */}
                             </tr>
