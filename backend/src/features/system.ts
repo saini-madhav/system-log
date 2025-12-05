@@ -21,47 +21,10 @@ const parseDate = (dateString: string): string | null => {
 };
 
 export const getSystemLog = async (req: Request, res: Response) => {
-    console.log("Fetching system log...");
-    console.log("Process CWD:", process.cwd());
-    console.log("__dirname:", __dirname);
     const startDate = req.query.startDate as string;
     const endDate = req.query.endDate as string;
     try {
-        // Try multiple paths for logs directory to support both local and Vercel deployments
-        let logsDir = path.join(__dirname, "../../logs");
-        console.log("Trying path 1:", logsDir, "exists:", fs.existsSync(logsDir));
-        
-        // If running from dist, try the original source relative path
-        if (!fs.existsSync(logsDir)) {
-            logsDir = path.join(process.cwd(), "logs");
-            console.log("Trying path 2:", logsDir, "exists:", fs.existsSync(logsDir));
-        }
-        
-        // If still not found, try absolute path from project root
-        if (!fs.existsSync(logsDir)) {
-            logsDir = path.join(__dirname, "../../../logs");
-            console.log("Trying path 3:", logsDir, "exists:", fs.existsSync(logsDir));
-        }
-        
-        console.log("Final logs directory path:", logsDir);
-        console.log("Logs directory exists:", fs.existsSync(logsDir));
-        
-        if (!fs.existsSync(logsDir)) {
-            return res.status(404).json({ 
-                status: "error", 
-                message: "Logs directory not found",
-                debug: {
-                    cwd: process.cwd(),
-                    dirname: __dirname,
-                    searchedPaths: [
-                        path.join(__dirname, "../../logs"),
-                        path.join(process.cwd(), "logs"),
-                        path.join(__dirname, "../../../logs")
-                    ]
-                }
-            });
-        }
-        
+        const logsDir = path.join(__dirname, "../../logs");
         const logFiles = fs.readdirSync(logsDir);
         
         // Parse start and end dates to YYYY-MM-DD format
@@ -72,7 +35,6 @@ export const getSystemLog = async (req: Request, res: Response) => {
         let filesProcessed = 0;
         
         for (const file of logFiles) {
-            console.log("Processing file:", file);
             const filePath = path.join(logsDir, file);
 
             // Read file content up-front so we can extract the date from inside the log
@@ -121,14 +83,12 @@ export const getSystemLog = async (req: Request, res: Response) => {
             }
         }
         
-        console.log(`Files processed: ${filesProcessed}`);
         
         const systemLogList = Object.entries(computerDisconnects).map(([computerName, numberOfDisconnectedPerCopmuter]) => ({
             computerName,
             numberOfDisconnectedPerCopmuter
         }));
         
-        console.log("systemLog:", systemLogList);
         res.status(200).json({ status: "success", data: systemLogList });
     } catch (error) {
         console.error("Error fetching system log:", error);
