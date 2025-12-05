@@ -13,15 +13,10 @@ const SystemLog = () => {
     const [endDate, setEndDate] = useState<string>(DefaultEndDate );
     const [systemLog, setSystemLog] = useState<ISystemLog[]>([]);
     
-    // console.log("startDate---", startDate);
-    // console.log("endDate---", endDate);
     const fetchSystemLog = async () => {
         try {
             const response = await getSystemLogApi(startDate, endDate);
-            console.log("Response from API:", response);
-            // const data = await response.json();
             setSystemLog(response?.data || []);
-            console.log("System Log Data:", response);
         } catch (error) {
             console.error("Error fetching system log:", error);
         }

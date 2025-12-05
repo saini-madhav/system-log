@@ -9,9 +9,7 @@ const getSystemLogApi = async (startDate: string, endDate: string) => {
         if (response.status < 200 || response.status >= 300) {
             throw new Error(`Error fetching system log: ${response.statusText || response.status}`);
         }
-        console.log("api response---", response); 
         const data = response.data;
-        console.log("api data---", data);
         return data;
     } catch (error) {
         console.error("Error in getSystemLog service:", error);
