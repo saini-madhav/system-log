@@ -53,30 +53,39 @@ const parseDate = (dateString) => {
 };
 const getSystemLog = async (req, res) => {
     console.log("Fetching system log...");
+    console.log("Process CWD:", process.cwd());
+    console.log("__dirname:", __dirname);
     const startDate = req.query.startDate;
     const endDate = req.query.endDate;
     try {
         // Try multiple paths for logs directory to support both local and Vercel deployments
         let logsDir = path.join(__dirname, "../../logs");
+        console.log("Trying path 1:", logsDir, "exists:", fs.existsSync(logsDir));
         // If running from dist, try the original source relative path
         if (!fs.existsSync(logsDir)) {
             logsDir = path.join(process.cwd(), "logs");
+            console.log("Trying path 2:", logsDir, "exists:", fs.existsSync(logsDir));
         }
         // If still not found, try absolute path from project root
         if (!fs.existsSync(logsDir)) {
             logsDir = path.join(__dirname, "../../../logs");
+            console.log("Trying path 3:", logsDir, "exists:", fs.existsSync(logsDir));
         }
-        console.log("Logs directory path:", logsDir);
+        console.log("Final logs directory path:", logsDir);
         console.log("Logs directory exists:", fs.existsSync(logsDir));
         if (!fs.existsSync(logsDir)) {
             return res.status(404).json({
                 status: "error",
                 message: "Logs directory not found",
-                searchedPaths: [
-                    path.join(__dirname, "../../logs"),
-                    path.join(process.cwd(), "logs"),
-                    path.join(__dirname, "../../../logs")
-                ]
+                debug: {
+                    cwd: process.cwd(),
+                    dirname: __dirname,
+                    searchedPaths: [
+                        path.join(__dirname, "../../logs"),
+                        path.join(process.cwd(), "logs"),
+                        path.join(__dirname, "../../../logs")
+                    ]
+                }
             });
         }
         const logFiles = fs.readdirSync(logsDir);
